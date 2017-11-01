@@ -1,26 +1,9 @@
-# Starter Project
----
+Description of the game:
 
-*Copyright (C) 2017 Improbable Worlds Limited. All rights reserved.*
+The basic gameplay involves collecting items that increases the size of the player, that has the shape of a ball. The goal of the game is reaching a fixed size before the others players and to gain an advantage it is possible to hit smaller players to destroy them and steal some of their size.
 
-- *GitHub repository*: [https://github.com/spatialos/StarterProject](https://github.com/spatialos/StarterProject)
+It will be possible to connect to the game at any stage of it, when the target size is reached the game will restart.
 
----
+The map will be composed by obstacles and narrow streets that will help smaller players to escape from the bigger ones.
 
-## Introduction
-
-This is a SpatialOS starter project with useful core features that you can extend to build your own SpatialOS application.
-
-It contains:
-
-* A Player spawned on client connection as per the [Unity Client Lifecycle Guide](https://spatialos.improbable.io/docs/reference/latest/tutorials/unity-client-lifecycle).
-* A Cube spawned through a snapshot via an entity template method and an Unity prefab.
-* The rest of the features included in the [BlankProject](https://github.com/spatialos/BlankProject).
-
-If you run into problems, or want to give us feedback, please visit the [SpatialOS forums](https://forums.improbable.io/).
-
-## Running the project
-
-To run the project locally, first build it by running `spatial worker build`, then start the server with `spatial local start`. You can connect a client by opening the Unity project and pressing the play button, or by running `spatial local worker launch UnityClient default`. See the [documentation](https://spatialos.improbable.io/docs/reference/latest/developing/local/run) for more details.
-
-To deploy the project to the cloud, first build it by running `spatial worker build -t=deployment`, then upload the assembly with `spatial cloud upload <assembly name>`, and finally deploy it with `spatial cloud launch <assembly name> <launch configuration file> <deployment name> --snapshot=<snapshot file>`. You can obtain and share links to connect to the deployment from the [console](http://console.improbable.io/projects). See the [documentation](https://docs.improbable.io/reference/latest/developing/deploy-cloud) for more details.
+Upon death the player will just respawn at the minimum size and will start again the race for the maximum size.

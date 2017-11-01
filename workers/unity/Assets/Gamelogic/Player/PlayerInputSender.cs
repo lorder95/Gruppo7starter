@@ -24,10 +24,11 @@ public class PlayerInputSender : MonoBehaviour
 	void Update ()
 
 	{
+		var speedMultiplier = 3;
 
-		var xAxis = Input.GetAxis("Horizontal");
+		var xAxis = Input.GetAxis("Horizontal")* speedMultiplier;
 
-		var yAxis = Input.GetAxis("Vertical");
+		var yAxis = Input.GetAxis("Vertical")* speedMultiplier;
 
 
 

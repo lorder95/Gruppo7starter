@@ -3,8 +3,11 @@
 namespace Assets.Gamelogic.Core
 {
     public static class SimulationSettings
-    {
+    {   
 		public static readonly float PlayerSpawnHeight = 10;
+		public static readonly float PlayerAcceleration = 15;
+
+
         public static readonly string PlayerPrefabName = "Player";
         public static readonly string PlayerCreatorPrefabName = "PlayerCreator";
         public static readonly string CubePrefabName = "Cube";

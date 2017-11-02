@@ -41,8 +41,21 @@ namespace Assets.Gamelogic.EntityTemplates
                 .AddComponent(new ClientConnection.Data(SimulationSettings.TotalHeartbeatsBeforeTimeout), CommonRequirementSets.PhysicsOnly)
 				.AddComponent(new PlayerInput.Data(new Joystick(xAxis: 0, yAxis: 0)), CommonRequirementSets.SpecificClientOnly(clientId))
                 .Build();
-
+            
             return playerTemplate;
+        }
+        
+
+        public static Entity CreateRampa1Template() {
+            return EntityBuilder.Begin()
+                .AddPositionComponent(Vector3.zero, CommonRequirementSets.PhysicsOnly)
+                .AddMetadataComponent("rampa1")
+                .SetPersistence(true)
+                .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
+                
+                .AddComponent(new Rotation.Data(Quaternion.identity.ToNativeQuaternion()), CommonRequirementSets.PhysicsOnly)
+                
+                .Build();
         }
 
         public static Entity CreateCubeTemplate()

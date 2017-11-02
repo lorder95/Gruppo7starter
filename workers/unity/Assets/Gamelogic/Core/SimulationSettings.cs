@@ -7,6 +7,8 @@ namespace Assets.Gamelogic.Core
 		public static readonly float PlayerSpawnHeight = 10;
 		public static readonly float PlayerAcceleration = 15;
 
+        public static readonly Quaternion InitialThirdPersonCameraRotation = Quaternion.Euler(40, 0, 0);
+        public static readonly float InitialThirdPersonCameraDistance = 15;
 
         public static readonly string PlayerPrefabName = "Player";
         public static readonly string PlayerCreatorPrefabName = "PlayerCreator";

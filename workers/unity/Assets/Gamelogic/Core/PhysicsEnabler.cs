@@ -45,8 +45,9 @@ public class PhysicsEnabler : MonoBehaviour
 	private void SetPhysicsEnabled(bool physicsEnabled)
 
 	{
-
+        Debug.Log("HELLO HELLO HELLO" + physicsEnabled);
 		GetComponent<Rigidbody>().isKinematic = !physicsEnabled;
+        GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
 	}
 

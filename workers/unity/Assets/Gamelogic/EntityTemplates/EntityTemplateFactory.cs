@@ -29,9 +29,12 @@ namespace Assets.Gamelogic.EntityTemplates
 
         public static Entity CreatePlayerTemplate(string clientId)
         {
+            float x = 18.0f;
+            float y = 18.0f;
+            float xCoord = Random.Range(x, -x);
+            float yCoord = Random.Range(y, -y);
             var playerTemplate = EntityBuilder.Begin()
-
-				.AddPositionComponent(new Improbable.Coordinates(0, SimulationSettings.PlayerSpawnHeight, 0).ToUnityVector(), CommonRequirementSets.PhysicsOnly)
+				.AddPositionComponent(new Improbable.Coordinates(xCoord, SimulationSettings.PlayerSpawnHeight, yCoord).ToUnityVector(), CommonRequirementSets.PhysicsOnly)
 			
                 .AddMetadataComponent(entityType: SimulationSettings.PlayerPrefabName)
                 .SetPersistence(false)

@@ -33,12 +33,14 @@ namespace Assets.Gamelogic.EntityTemplates
             float y = 18.0f;
             float xCoord = Random.Range(x, -x);
             float yCoord = Random.Range(y, -y);
+            float scale = Random.Range(1, 5);
             var playerTemplate = EntityBuilder.Begin()
 				.AddPositionComponent(new Improbable.Coordinates(xCoord, SimulationSettings.PlayerSpawnHeight, yCoord).ToUnityVector(), CommonRequirementSets.PhysicsOnly)
 			
                 .AddMetadataComponent(entityType: SimulationSettings.PlayerPrefabName)
                 .SetPersistence(false)
                 .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
+                .AddComponent(new Scale.Data(scale,scale,scale), CommonRequirementSets.PhysicsOnly)
                 .AddComponent(new Rotation.Data(Quaternion.identity.ToNativeQuaternion()), CommonRequirementSets.PhysicsOnly)
                 .AddComponent(new ClientAuthorityCheck.Data(), CommonRequirementSets.SpecificClientOnly(clientId))
                 .AddComponent(new ClientConnection.Data(SimulationSettings.TotalHeartbeatsBeforeTimeout), CommonRequirementSets.PhysicsOnly)

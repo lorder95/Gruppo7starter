@@ -13,6 +13,7 @@ namespace Assets.Gamelogic.Core
 
         void OnEnable()
         {
+            
             transform.position = PositionReader.Data.coords.ToUnityVector();
             transform.rotation = RotationReader.Data.rotation.ToUnityQuaternion();
 

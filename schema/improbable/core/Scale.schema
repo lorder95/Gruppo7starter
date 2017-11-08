@@ -1,0 +1,8 @@
+package improbable.core;
+
+component Scale {
+    id = 2000;
+	float x = 1;
+    float y = 2;
+    float z = 3;
+}

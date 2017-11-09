@@ -71,9 +71,8 @@ public class PlayerMover : MonoBehaviour {
 
 			.SetCoords(new Coordinates(pos.x, pos.y, pos.z));
 
+
 		PositionWriter.Send(positionUpdate);
-
-
 
 		var rotationUpdate = new Rotation.Update()
 

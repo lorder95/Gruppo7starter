@@ -4,6 +4,8 @@ using Improbable.Player;
 using Improbable.Unity.Visualizer;
 
 using UnityEngine;
+using Assets.Gamelogic.UI;
+using UnityEngine.UI;
 
 
 
@@ -18,6 +20,7 @@ public class MyPlayerHighlighter : MonoBehaviour
 
 
 	[SerializeField] private GameObject playerBody;
+	[SerializeField] private Text name;
 
 
 
@@ -25,8 +28,8 @@ public class MyPlayerHighlighter : MonoBehaviour
 
 	{
 
-		playerBody.GetComponent<Renderer>().material.color = Color.blue;
-
-	}
+		playerBody.GetComponent<Renderer>().material.color = SplashScreenController.color;
+		name.text = SplashScreenController.name;
+}
 
 }

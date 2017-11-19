@@ -24,6 +24,8 @@ public class TransformSender : MonoBehaviour
 
 	[Require] private Rotation.Writer RotationWriter;
 
+    [Require] private Scale.Writer ScaleWriter;
+
 
 
 	void Update ()
@@ -45,7 +47,8 @@ public class TransformSender : MonoBehaviour
 			.SetRotation(MathUtils.ToNativeQuaternion(transform.rotation));
 
 		RotationWriter.Send(rotationUpdate);
+        
 
-	}
+    }
 
 }

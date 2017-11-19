@@ -14,8 +14,7 @@ namespace Assets.Gamelogic.Core {
 
             transform.position = PositionReader.Data.coords.ToUnityVector();
             transform.rotation = RotationReader.Data.rotation.ToUnityQuaternion();
-            transform.localScale = new Vector3(ScaleReader.Data.x, ScaleReader.Data.y, ScaleReader.Data.z);
-
+            transform.localScale = new Vector3(ScaleReader.Data.s, ScaleReader.Data.s, ScaleReader.Data.s);
             PositionReader.ComponentUpdated.Add(OnPositionUpdated);
             RotationReader.ComponentUpdated.Add(OnRotationUpdated);
             ScaleReader.ComponentUpdated.Add(OnScaleUpdated);
@@ -45,8 +44,10 @@ namespace Assets.Gamelogic.Core {
 
         void OnScaleUpdated(Scale.Update update) {
             if (ScaleReader.Authority == Authority.NotAuthoritative) {
-                if (update.x.HasValue && update.y.HasValue && update.z.HasValue) {
-                    transform.localScale = new Vector3(update.x.Value, update.y.Value, update.z.Value);
+                if (update.s.HasValue) {
+                    var v = update.s.Value;
+                    var old = transform.localScale.x;
+                    transform.localScale = new Vector3(v,v,v);
                 }
             }
         }

@@ -34,5 +34,9 @@ namespace Assets.Gamelogic.Core
                 .OnSuccess (_ => responseHandle.Respond (new CreatePlayerResponse ((int) StatusCode.Success)))
                 .OnFailure (failure => responseHandle.Respond (new CreatePlayerResponse ((int) failure.StatusCode)));
         }
+
+        public static void LogThisShit(string message) {
+            Debug.LogWarning(message);
+        }
     }
 }

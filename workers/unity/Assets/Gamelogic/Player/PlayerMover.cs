@@ -63,7 +63,7 @@ public class PlayerMover : MonoBehaviour {
 
 		rigidbody.AddForce(direction * SimulationSettings.PlayerAcceleration);
 
-
+       
 
 		var pos = rigidbody.position;
 

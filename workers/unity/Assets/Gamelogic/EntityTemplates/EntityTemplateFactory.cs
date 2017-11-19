@@ -1,4 +1,5 @@
 ﻿using Assets.Gamelogic.Core;
+using Assets.Gamelogic.Utils;
 using Improbable;
 using Improbable.Core;
 using Improbable.Player;
@@ -40,13 +41,13 @@ namespace Assets.Gamelogic.EntityTemplates
                 .AddMetadataComponent(entityType: SimulationSettings.PlayerPrefabName)
                 .SetPersistence(false)
                 .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
-                .AddComponent(new Scale.Data(scale,scale,scale), CommonRequirementSets.PhysicsOnly)
+                .AddComponent(new Scale.Data(scale), CommonRequirementSets.PhysicsOnly)
                 .AddComponent(new Rotation.Data(Quaternion.identity.ToNativeQuaternion()), CommonRequirementSets.PhysicsOnly)
                 .AddComponent(new ClientAuthorityCheck.Data(), CommonRequirementSets.SpecificClientOnly(clientId))
                 .AddComponent(new ClientConnection.Data(SimulationSettings.TotalHeartbeatsBeforeTimeout), CommonRequirementSets.PhysicsOnly)
 				.AddComponent(new PlayerInput.Data(new Joystick(xAxis: 0, yAxis: 0)), CommonRequirementSets.SpecificClientOnly(clientId))
                 .Build();
-            
+            Debug.LogWarning("test: " + scale);
             return playerTemplate;
         }
         

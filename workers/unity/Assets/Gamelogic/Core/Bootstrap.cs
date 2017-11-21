@@ -31,6 +31,7 @@ namespace Assets.Gamelogic.Core
 				SpatialOS.Connect(gameObject);
 				break;
 			case WorkerPlatform.UnityClient:
+                Debug.LogWarning("This is called now");
 				Application.targetFrameRate = SimulationSettings.TargetClientFramerate;
 				SpatialOS.OnConnected += CreatePlayer;
 				SceneManager.LoadScene(BuildSettings.SplashScreenScene, LoadSceneMode.Additive);
@@ -41,13 +42,15 @@ namespace Assets.Gamelogic.Core
 		// Called when pressing Connect from the splash screen.
 		public void ConnectToClient()
 		{
+            Debug.LogWarning("Connect to client");
 			SpatialOS.Connect(gameObject);
 		}
 
 		// Search for the PlayerCreator entity in the world in order to send a CreatePlayer command.
 		public static void CreatePlayer()
 		{
-			var playerCreatorQuery = Query.HasComponent<PlayerCreation>().ReturnOnlyEntityIds();
+            Debug.LogWarning("Player created");
+            var playerCreatorQuery = Query.HasComponent<PlayerCreation>().ReturnOnlyEntityIds();
 			SpatialOS.WorkerCommands.SendQuery(playerCreatorQuery)
 				.OnSuccess(OnSuccessfulPlayerCreatorQuery)
 				.OnFailure(OnFailedPlayerCreatorQuery);
@@ -55,7 +58,8 @@ namespace Assets.Gamelogic.Core
 
 		private static void OnSuccessfulPlayerCreatorQuery(EntityQueryResult queryResult)
 		{
-			if (queryResult.EntityCount < 1)
+            Debug.LogWarning("Player created successful");
+            if (queryResult.EntityCount < 1)
 			{
 				Debug.LogError("Failed to find PlayerCreator. SpatialOS probably hadn't finished loading the initial snapshot. Try again in a few seconds.");
 				return;
@@ -73,7 +77,8 @@ namespace Assets.Gamelogic.Core
 		// Send a CreatePlayer command to the PLayerCreator entity requesting a Player entity be spawned.
 		private static void RequestPlayerCreation(EntityId playerCreatorEntityId)
 		{
-			SpatialOS.WorkerCommands.SendCommand(PlayerCreation.Commands.CreatePlayer.Descriptor, new CreatePlayerRequest(), playerCreatorEntityId)
+            Debug.LogWarning("Player created request");
+            SpatialOS.WorkerCommands.SendCommand(PlayerCreation.Commands.CreatePlayer.Descriptor, new CreatePlayerRequest(), playerCreatorEntityId)
 				.OnFailure(response => OnCreatePlayerFailure(response, playerCreatorEntityId));
 		}
 

@@ -6,7 +6,7 @@ using Assets.Gamelogic.Utils;
 using Improbable;
 
 using Improbable.Core;
-
+using Improbable.Entity.Component;
 using Improbable.Player;
 
 using Improbable.Unity;
@@ -23,81 +23,84 @@ public class PlayerMover : MonoBehaviour {
 
 
 
-	[Require] private Position.Writer PositionWriter;
+    [Require] private Position.Writer PositionWriter;
 
-	[Require] private Rotation.Writer RotationWriter;
+    [Require] private Rotation.Writer RotationWriter;
 
-	[Require] private PlayerInput.Reader PlayerInputReader;
+    [Require] private PlayerInput.Reader PlayerInputReader;
 
     [Require] private Scale.Writer ScaleWriter;
 
+    [Require] private Status.Writer StatusWriter;
 
-	private Rigidbody rigidbody;
+
+    private Rigidbody rigidbody;
 
 
-	void OnEnable ()
+    void OnEnable() {
 
-	{
-
-		rigidbody = GetComponent<Rigidbody>();
-        Debug.LogWarning("Enabled");
-        PlayerInputReader.RespawnTriggered.Add(Respawning);
+        rigidbody = GetComponent<Rigidbody>();
+        Debug.LogWarning("Enabled playermover");
+        PlayerInputReader.RespawnTriggered.Add(RespawningResponse);
+        StatusWriter.CommandReceiver.OnGameWon.RegisterResponse(ResetGame);
 
     }
 
     private void OnDisable() {
-        PlayerInputReader.RespawnTriggered.Remove(Respawning);
+        PlayerInputReader.RespawnTriggered.Remove(RespawningResponse);
+        StatusWriter.CommandReceiver.OnGameWon.DeregisterResponse();
     }
 
-    void FixedUpdate ()
+    Win ResetGame(Winner request, ICommandCallerInfo callerInfo) {
+        Debug.LogWarning("This entity won: " + request.winnerName);
+        Respawning();
+        return new Win();
+    }
 
-	{
-        
-		var joystick = PlayerInputReader.Data.joystick;
+    void FixedUpdate() {
 
-		var direction = new Vector3(joystick.xAxis, 0, joystick.yAxis);
+        var joystick = PlayerInputReader.Data.joystick;
 
-        
+        var direction = new Vector3(joystick.xAxis, 0, joystick.yAxis);
 
-		if (direction.sqrMagnitude > 1)
 
-		{
 
-			direction.Normalize();
+        if (direction.sqrMagnitude > 1) {
 
-		}
+            direction.Normalize();
 
-		rigidbody.AddForce(direction * SimulationSettings.PlayerAcceleration);
+        }
+
+        rigidbody.AddForce(direction * SimulationSettings.PlayerAcceleration);
 
         //Debug.LogWarning("PM: " + rigidbody.position.y);
 
         var pos = rigidbody.position;
 
-		var positionUpdate = new Position.Update()
+        var positionUpdate = new Position.Update()
 
-			.SetCoords(new Coordinates(pos.x, pos.y, pos.z));
+            .SetCoords(new Coordinates(pos.x, pos.y, pos.z));
 
 
-		PositionWriter.Send(positionUpdate);
+        PositionWriter.Send(positionUpdate);
 
-		var rotationUpdate = new Rotation.Update()
+        var rotationUpdate = new Rotation.Update()
 
-			.SetRotation(rigidbody.rotation.ToNativeQuaternion());
+            .SetRotation(rigidbody.rotation.ToNativeQuaternion());
 
-		RotationWriter.Send(rotationUpdate);
+        RotationWriter.Send(rotationUpdate);
 
-	}
 
-    void Respawning(Respawn respawn) {
-        
+    }
 
+    void Respawning() {
         float x = 18.0f;
         float y = 18.0f;
-        float xCoord = Random.Range(x, -x);
-        float yCoord = Random.Range(y, -y);
+        float xCoord = Random.Range(-x, x);
+        float yCoord = Random.Range(-y, y);
         var rigidbody = GetComponent<Rigidbody>();
-
-        transform.position = new Vector3(0, SimulationSettings.PlayerSpawnHeight, 0);
+        rigidbody.isKinematic = false;
+        transform.position = new Vector3(xCoord, SimulationSettings.PlayerSpawnHeight, yCoord);
         transform.rotation = UnityEngine.Quaternion.identity;
         rigidbody.velocity = new Vector3(0, 0, 0);
 
@@ -107,7 +110,7 @@ public class PlayerMover : MonoBehaviour {
         var positionUpdate = new Position.Update()
 
             .SetCoords(new Coordinates(pos.x, pos.y, pos.z));
-        
+
         PositionWriter.Send(positionUpdate);
 
         var rotationUpdate = new Rotation.Update()
@@ -122,6 +125,10 @@ public class PlayerMover : MonoBehaviour {
             .SetS(1.0f);
 
         ScaleWriter.Send(scaleUpdate);
+    }
+
+    void RespawningResponse(Respawn respawn) {
+        Respawning();
     }
 
 

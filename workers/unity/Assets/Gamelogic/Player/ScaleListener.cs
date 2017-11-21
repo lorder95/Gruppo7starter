@@ -5,11 +5,17 @@ using Improbable.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Improbable.Player;
+using Improbable.Unity.Core.EntityQueries;
+using Improbable.Unity.Core;
+using Improbable.Collections;
+using Improbable;
 
 [WorkerType(WorkerPlatform.UnityWorker)]
 
 public class ScaleListener : MonoBehaviour {
     [Require] private Scale.Reader ScaleReader;
+    [Require] private Status.Writer StatusWriter;
 
     void OnEnable() {
         transform.localScale = new Vector3(ScaleReader.Data.s, ScaleReader.Data.s, ScaleReader.Data.s);
@@ -23,13 +29,53 @@ public class ScaleListener : MonoBehaviour {
     void OnScaleUpdated(Scale.Update update) {
         if (update.s.HasValue) {
             var v = update.s.Value;
-            if (v == 10) {
-                // win!
-                //send event
+            Debug.LogWarning("value = " + v);
+            if (v >= 6) {
+                Debug.LogWarning("if");
+
+                ResetQuery();
+                return;
             }
             transform.localScale = new Vector3(v, v, v);
         }
-        
+
+    }
+    private void OnGameWinSuccess(Win response) {
+        Debug.LogWarning("Gamewin command succeeded.");
+    }
+
+    private void OnGameWinFailure(ICommandErrorDetails response) {
+        Debug.LogError("Failed to send GameWin command with error: " + response.ErrorMessage);
+    }
+    void ResetQuery() {
+
+        Debug.LogWarning("called reset");
+        var query = Query.HasComponent<ClientConnection>().ReturnOnlyEntityIds();
+
+        Debug.LogWarning("queryied");
+        SpatialOS.Commands.SendQuery(StatusWriter, query)
+          .OnSuccess(result => {
+              Debug.LogWarning("Found " + result.EntityCount + " nearby entities with a health component");
+              if (result.EntityCount < 1) {
+                  return;
+              }
+              Map<EntityId, Entity> resultMap = result.Entities;
+              foreach (EntityId id in resultMap.Keys) {
+                  Entity entity = SpatialOS.GetLocalEntity(id);
+                  if (entity != null) {
+                      Debug.LogWarning("entity found");
+
+                      SpatialOS.Commands.SendCommand(StatusWriter, Status.Commands.GameWon.Descriptor, new Winner(gameObject.GetSpatialOsEntity().EntityId.ToString()), id)
+                          .OnSuccess(OnGameWinSuccess)
+                          .OnFailure(OnGameWinFailure);
+
+
+                      //StatusWriter.Send(new Status.Update().AddGameWon(new Win(gameObject.EntityId().ToString())));
+                  }
+              }
+
+          })
+              .OnFailure(errorDetails => Debug.LogWarning("Query failed with error: " + errorDetails));
     }
 }
 

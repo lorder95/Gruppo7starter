@@ -1,0 +1,15 @@
+package improbable.player;
+
+type Winner{
+	string winner_name = 1;
+	}
+type Dead {}
+type Win{}
+
+component Status {
+    // Component ID, unique within the project
+    id = 2003;
+
+	event Dead player_dead;
+	command Win game_won(Winner);
+}

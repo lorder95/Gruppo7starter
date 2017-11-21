@@ -22,8 +22,9 @@ namespace Assets.Gamelogic.UI
 
 		public void AttemptToConnect()
 		{
-			// Disable connect button
-			ConnectButton.interactable = false;
+            Debug.LogWarning("Attempt to connect");
+            // Disable connect button
+            ConnectButton.interactable = false;
 
 			// Hide warning if already shown
 			NotReadyWarning.SetActive(false);
@@ -33,10 +34,10 @@ namespace Assets.Gamelogic.UI
 
 		private void AttemptConnection()
 		{
-
-			// In case the client connection is successful this coroutine is destroyed as part of unloading
-			// the splash screen so ConnectionTimeout won't be called
-			FindObjectOfType<Bootstrap>().ConnectToClient();
+            Debug.LogWarning("Attempt connection");
+            // In case the client connection is successful this coroutine is destroyed as part of unloading
+            // the splash screen so ConnectionTimeout won't be called
+            FindObjectOfType<Bootstrap>().ConnectToClient();
 			StartCoroutine(TimerUtils.WaitAndPerform(SimulationSettings.ClientConnectionTimeoutSecs, ConnectionTimeout));
 			Text colore = colorDropdown.captionText;
 			string col = colore.text;

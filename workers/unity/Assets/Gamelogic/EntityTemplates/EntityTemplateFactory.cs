@@ -15,13 +15,15 @@ namespace Assets.Gamelogic.EntityTemplates
     {
         public static Entity CreatePlayerCreatorTemplate()
         {
+            Debug.LogWarning("Creating playercreator");
             var playerCreatorEntityTemplate = EntityBuilder.Begin()
-				.AddPositionComponent(new Improbable.Coordinates(0, SimulationSettings.PlayerSpawnHeight, 0).ToUnityVector(), CommonRequirementSets.PhysicsOnly)
+                .AddPositionComponent(new Improbable.Coordinates(0, SimulationSettings.PlayerSpawnHeight, 0).ToUnityVector(), CommonRequirementSets.PhysicsOnly)
                 .AddMetadataComponent(entityType: SimulationSettings.PlayerCreatorPrefabName)
                 .SetPersistence(true)
                 .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
                 .AddComponent(new Rotation.Data(Quaternion.identity.ToNativeQuaternion()), CommonRequirementSets.PhysicsOnly)
                 .AddComponent(new PlayerCreation.Data(), CommonRequirementSets.PhysicsOnly)
+            //  .AddComponent(new Status.Data(), CommonRequirementSets.PhysicsOnly)
 			//	.AddComponent(new PlayerInput.Data(new Joystick(0, 0)), CommonRequirementSets.SpecificClientOnly(clientId))
                 .Build();
 
@@ -42,6 +44,7 @@ namespace Assets.Gamelogic.EntityTemplates
                 .SetPersistence(false)
                 .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
                 .AddComponent(new Scale.Data(scale), CommonRequirementSets.PhysicsOnly)
+                .AddComponent(new Status.Data(), CommonRequirementSets.PhysicsOnly)
                 .AddComponent(new Rotation.Data(Quaternion.identity.ToNativeQuaternion()), CommonRequirementSets.PhysicsOnly)
                 .AddComponent(new ClientAuthorityCheck.Data(), CommonRequirementSets.SpecificClientOnly(clientId))
                 .AddComponent(new ClientConnection.Data(SimulationSettings.TotalHeartbeatsBeforeTimeout), CommonRequirementSets.PhysicsOnly)

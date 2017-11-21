@@ -2,6 +2,8 @@
 using Improbable.Core;
 using Improbable.Unity.Visualizer;
 using UnityEngine;
+using Improbable;
+using Improbable.Worker;
 
 namespace Assets.Gamelogic.Player
 {
@@ -9,7 +11,7 @@ namespace Assets.Gamelogic.Player
     {
         [Require]
         private ClientAuthorityCheck.Writer ClientAuthorityCheckWriter;
-
+        [Require] private Scale.Reader ScaleReader;
         private Transform camera;
         private UnityEngine.Quaternion cameraRotation;
         private float cameraDistance;
@@ -25,7 +27,13 @@ namespace Assets.Gamelogic.Player
             // Set the camera rotation and zoom distance to some initial values
             cameraRotation = SimulationSettings.InitialThirdPersonCameraRotation;
             cameraDistance = SimulationSettings.InitialThirdPersonCameraDistance;
+            ScaleReader.ComponentUpdated.Add(OnScaleUpdated);
+        }
 
+        void OnDisable()
+        {
+            
+            ScaleReader.ComponentUpdated.Remove(OnScaleUpdated);
         }
 
         private void LateUpdate()
@@ -40,6 +48,17 @@ namespace Assets.Gamelogic.Player
             camera.localPosition = cameraRotation * Vector3.back * cameraDistance;
             // Set the camera to look towards the Player model
             camera.position=transform.position-offset;
+        }
+
+        void OnScaleUpdated(Scale.Update update)
+        {
+            if (ScaleReader.Authority == Authority.NotAuthoritative)
+            {
+                if (update.s.HasValue)
+                {
+                    offset= (new Vector3(offset.x, offset.y - 0.5F, offset.z + 0.5F));
+                }
+            }
         }
     }
 }

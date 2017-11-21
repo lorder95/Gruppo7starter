@@ -36,8 +36,8 @@ namespace Assets.Gamelogic.EntityTemplates
             float yCoord = Random.Range(y, -y);
             float scale = Random.Range(1, 5);
             var playerTemplate = EntityBuilder.Begin()
-				.AddPositionComponent(new Improbable.Coordinates(xCoord, SimulationSettings.PlayerSpawnHeight, yCoord).ToUnityVector(), CommonRequirementSets.PhysicsOnly)
-			
+                .AddPositionComponent(new Improbable.Coordinates(xCoord, SimulationSettings.PlayerSpawnHeight, yCoord).ToUnityVector(), CommonRequirementSets.PhysicsOnly)
+
                 .AddMetadataComponent(entityType: SimulationSettings.PlayerPrefabName)
                 .SetPersistence(false)
                 .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
@@ -47,7 +47,6 @@ namespace Assets.Gamelogic.EntityTemplates
                 .AddComponent(new ClientConnection.Data(SimulationSettings.TotalHeartbeatsBeforeTimeout), CommonRequirementSets.PhysicsOnly)
 				.AddComponent(new PlayerInput.Data(new Joystick(xAxis: 0, yAxis: 0)), CommonRequirementSets.SpecificClientOnly(clientId))
                 .Build();
-            Debug.LogWarning("test: " + scale);
             return playerTemplate;
         }
         

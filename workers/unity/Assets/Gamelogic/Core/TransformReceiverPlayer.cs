@@ -30,6 +30,7 @@ namespace Assets.Gamelogic.Core {
             if (PositionReader.Authority == Authority.NotAuthoritative) {
                 if (update.coords.HasValue) {
                     transform.position = update.coords.Value.ToUnityVector();
+                    //Debug.LogWarning("TRP: " + transform.position.y);
                 }
             }
         }

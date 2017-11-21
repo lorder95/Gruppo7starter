@@ -20,7 +20,7 @@ namespace Assets.GameLogic.Core {
         private void OnCollisionEnter(Collision other) {
             if (other.gameObject.IsSpatialOsEntity()) {
                 if (other != null && other.gameObject.GetSpatialOsEntity().PrefabName == "Cube") {
-                    Debug.LogWarning("0: Collision accepted from " + gameObject.GetSpatialOsEntity().PrefabName+ "with " + other.gameObject.GetSpatialOsEntity().PrefabName);
+                    //Debug.LogWarning("0: Collision accepted from " + gameObject.GetSpatialOsEntity().PrefabName+ "with " + other.gameObject.GetSpatialOsEntity().PrefabName);
                     var current = ScaleWriter.Data.s;
                    
                     Debug.LogWarning("1: " + current + " - " + gameObject.transform.localScale.x);
@@ -32,7 +32,7 @@ namespace Assets.GameLogic.Core {
 
                 }
                 if (other != null && other.gameObject.GetSpatialOsEntity().PrefabName == "Player") {
-                    Debug.LogWarning("1: Collision accepted from " + gameObject.GetSpatialOsEntity().PrefabName + "with " + other.gameObject.GetSpatialOsEntity().PrefabName);
+                    //Debug.LogWarning("1: Collision accepted from " + gameObject.GetSpatialOsEntity().PrefabName + "with " + other.gameObject.GetSpatialOsEntity().PrefabName);
                     //SpatialOS.Commands.DeleteEntity(ClientConnectionWriter, gameObject.EntityId());
                     GameObject loser;
                     if(other.gameObject.transform.localScale.x > gameObject.transform.localScale.x) {

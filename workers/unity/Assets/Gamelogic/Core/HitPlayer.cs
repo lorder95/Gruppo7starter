@@ -34,7 +34,7 @@ namespace Assets.GameLogic.Core {
                    
                     Debug.LogWarning("1: " + current + " - " + gameObject.transform.localScale.x);
                     var scaleUpdate = new Scale.Update()
-                        .SetS(current + 1f);
+                        .SetS(current + 0.2f);
                     Debug.LogWarning("2:");
                     ScaleWriter.Send(scaleUpdate);
                     Debug.LogWarning("3:");
@@ -53,6 +53,7 @@ namespace Assets.GameLogic.Core {
                         //SceneManager.LoadSceneAsync(BuildSettings.SplashScreenScene, LoadSceneMode.Additive);
                         
                         Debug.LogWarning("Calling");
+
                         StatusWriter.Send(new Status.Update().AddPlayerDead(new Dead()));
                         /*SpatialOS.Commands.DeleteEntity(ClientConnectionWriter, gameObject.EntityId(), result => {
                         if (result.StatusCode != StatusCode.Success) {

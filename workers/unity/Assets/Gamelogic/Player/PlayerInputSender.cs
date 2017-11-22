@@ -10,6 +10,8 @@ using Improbable.Worker;
 using UnityEngine.SceneManagement;
 using Assets.Gamelogic.Core;
 using Improbable.Unity.Core;
+using Improbable.Core;
+using UnityEngine.UI;
 
 [WorkerType(WorkerPlatform.UnityClient)]
 
@@ -19,24 +21,54 @@ public class PlayerInputSender : MonoBehaviour
 
 	[Require] private PlayerInput.Writer PlayerInputWriter;
     [Require] private Status.Reader StatusReader;
+    [Require] private Scale.Reader ScaleReader;
     [SerializeField] private GameObject Model;
+
+    private GameObject scoreCanvasUI;
+    private Text totalPointsGUI;
+
+    private void Awake() {
+        scoreCanvasUI = GameObject.Find("Canvas");
+        if (scoreCanvasUI) {
+            totalPointsGUI = scoreCanvasUI.GetComponentInChildren<Text>();
+            scoreCanvasUI.SetActive(true);
+            updateGUI(1);
+        }
+    }
 
     void OnEnable() {
 
 
         StatusReader.PlayerDeadTriggered.Add(BackToSplash);
+        ScaleReader.ComponentUpdated.Add(OnNumberOfPointsUpdated);
 
     }
 
     private void OnDisable() {
         StatusReader.PlayerDeadTriggered.Remove(BackToSplash);
+        ScaleReader.ComponentUpdated.Remove(OnNumberOfPointsUpdated);
     }
 
     void BackToSplash(Dead dead) {
-        Debug.LogWarning("Called");
-        SpatialOS.Disconnect();
+        Debug.LogWarning("Called backtosplash");
+        PlayerInputWriter.Send(new PlayerInput.Update().AddRespawn(new Respawn()));     
+    }
 
-        SceneManager.LoadScene(BuildSettings.SplashScreenScene, LoadSceneMode.Additive);
+
+    private void OnNumberOfPointsUpdated(Scale.Update update) {
+        float v = update.s.Value * 5-4;
+        int numberOfPoints = (int)v;
+        updateGUI(numberOfPoints);
+    }
+    void updateGUI(int score) {
+        if (scoreCanvasUI) {
+            if (score > 0) {
+                scoreCanvasUI.SetActive(true);
+                totalPointsGUI.text = score.ToString() + "/56";
+            } else {
+                scoreCanvasUI.SetActive(false);
+            }
+        }
     }
     void Update ()
 

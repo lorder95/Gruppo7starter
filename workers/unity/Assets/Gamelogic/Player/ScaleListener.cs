@@ -30,7 +30,7 @@ public class ScaleListener : MonoBehaviour {
         if (update.s.HasValue) {
             var v = update.s.Value;
             Debug.LogWarning("value = " + v);
-            if (v >= 6) {
+            if (v >= 10) {
                 Debug.LogWarning("if");
 
                 ResetQuery();

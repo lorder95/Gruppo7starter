@@ -90,6 +90,10 @@ public class PlayerMover : MonoBehaviour {
 
         RotationWriter.Send(rotationUpdate);
 
+        if(pos.y < -60) {
+            Respawning();
+        }
+
 
     }
 

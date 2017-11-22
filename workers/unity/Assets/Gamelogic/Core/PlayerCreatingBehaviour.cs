@@ -62,6 +62,8 @@ namespace Assets.Gamelogic.Core
             SpatialOS.Commands.CreateEntity (PlayerCreationWriter, playerEntityTemplate)
                 .OnSuccess (_ => responseHandle.Respond (new CreatePlayerResponse ((int) StatusCode.Success)))
                 .OnFailure (failure => responseHandle.Respond (new CreatePlayerResponse ((int) failure.StatusCode)));
+            var cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+            SpatialOS.Commands.CreateEntity(PlayerCreationWriter, cubeEntityTemplate);
         }
     }
 }

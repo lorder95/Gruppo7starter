@@ -68,7 +68,7 @@ namespace Assets.Gamelogic.EntityTemplates
         public static Entity CreateCubeTemplate()
         {
             var cubeTemplate = EntityBuilder.Begin()
-                .AddPositionComponent(Improbable.Coordinates.ZERO.ToUnityVector(), CommonRequirementSets.PhysicsOnly)
+                .AddPositionComponent(new Vector3 (5,0,0), CommonRequirementSets.PhysicsOnly)
                 .AddMetadataComponent(entityType: SimulationSettings.CubePrefabName)
                 .SetPersistence(true)
                 .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)

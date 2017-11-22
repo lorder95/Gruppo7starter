@@ -27,7 +27,7 @@ namespace Assets.Editor
             
             snapshotEntities = entities.ToDictionary(e => new EntityId(currentEntityId++));
             snapshotEntities.Add(new EntityId(currentEntityId++), EntityTemplateFactory.CreatePlayerCreatorTemplate());
-			snapshotEntities.Add(new EntityId(currentEntityId++), EntityTemplateFactory.CreateCubeTemplate());
+			//snapshotEntities.Add(new EntityId(currentEntityId++), EntityTemplateFactory.CreateCubeTemplate());
             //snapshotEntities.Add(new EntityId(currentEntityId++), EntityTemplateFactory.CreateRampa1Template());
             SaveSnapshot(snapshotEntities);
 		}

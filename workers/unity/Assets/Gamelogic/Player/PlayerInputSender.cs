@@ -56,7 +56,7 @@ public class PlayerInputSender : MonoBehaviour
 
 
     private void OnNumberOfPointsUpdated(Scale.Update update) {
-        float v = update.s.Value * 5-4;
+        float v = update.s.Value * SimulationSettings.ScoreIncrement-(SimulationSettings.ScoreIncrement-1);
         int numberOfPoints = (int)v;
         updateGUI(numberOfPoints);
     }
@@ -64,7 +64,7 @@ public class PlayerInputSender : MonoBehaviour
         if (scoreCanvasUI) {
             if (score > 0) {
                 scoreCanvasUI.SetActive(true);
-                totalPointsGUI.text = score.ToString() + "/56";
+                totalPointsGUI.text = score.ToString() + "/" + (SimulationSettings.MaxScore*SimulationSettings.ScoreIncrement-(SimulationSettings.ScoreIncrement-1)).ToString();
             } else {
                 scoreCanvasUI.SetActive(false);
             }

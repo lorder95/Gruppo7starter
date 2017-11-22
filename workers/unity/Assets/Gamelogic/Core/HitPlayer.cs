@@ -25,21 +25,32 @@ namespace Assets.GameLogic.Core {
             rigidbody = GetComponent<Rigidbody>();
             Model.GetComponent<MeshRenderer>().enabled = false;
         }
-
-        private void OnCollisionEnter(Collision other) {
+        private void OnTriggerEnter(Collider other) {
             if (other.gameObject.IsSpatialOsEntity()) {
                 if (other != null && other.gameObject.GetSpatialOsEntity().PrefabName == "Cube") {
                     //Debug.LogWarning("0: Collision accepted from " + gameObject.GetSpatialOsEntity().PrefabName+ "with " + other.gameObject.GetSpatialOsEntity().PrefabName);
+
+                    SpatialOS.Commands.DeleteEntity(ClientConnectionWriter, other.gameObject.EntityId(), result => {
+                        if (result.StatusCode != StatusCode.Success) {
+                            Debug.Log("Failed to delete entity with error: " + result.ErrorMessage);
+                            return;
+                        }
+                        Debug.Log("Deleted entity: " + result.Response.Value);
+                    });
                     var current = ScaleWriter.Data.s;
-                   
+
                     Debug.LogWarning("1: " + current + " - " + gameObject.transform.localScale.x);
                     var scaleUpdate = new Scale.Update()
-                        .SetS(current + 0.2f);
+                        .SetS(current + SimulationSettings.PlayerIncrement);
                     Debug.LogWarning("2:");
                     ScaleWriter.Send(scaleUpdate);
                     Debug.LogWarning("3:");
 
                 }
+            }
+        }
+        private void OnCollisionEnter(Collision other) {
+            if (other.gameObject.IsSpatialOsEntity()) {
                 if (other != null && other.gameObject.GetSpatialOsEntity().PrefabName == "Player") {
                     //Debug.LogWarning("1: Collision accepted from " + gameObject.GetSpatialOsEntity().PrefabName + "with " + other.gameObject.GetSpatialOsEntity().PrefabName);
                     //SpatialOS.Commands.DeleteEntity(ClientConnectionWriter, gameObject.EntityId());

@@ -10,6 +10,7 @@ using Improbable.Unity.Core.EntityQueries;
 using Improbable.Unity.Core;
 using Improbable.Collections;
 using Improbable;
+using Assets.Gamelogic.Core;
 
 [WorkerType(WorkerPlatform.UnityWorker)]
 
@@ -30,7 +31,7 @@ public class ScaleListener : MonoBehaviour {
         if (update.s.HasValue) {
             var v = update.s.Value;
             Debug.LogWarning("value = " + v);
-            if (v >= 10) {
+            if (v >= SimulationSettings.MaxScore) {
                 Debug.LogWarning("if");
 
                 ResetQuery();

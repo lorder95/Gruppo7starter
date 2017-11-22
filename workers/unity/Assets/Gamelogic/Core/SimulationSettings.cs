@@ -26,6 +26,9 @@ namespace Assets.Gamelogic.Core
         public static readonly float PlayerCreatorQueryRetrySecs = 4;
         public static readonly float PlayerEntityCreationRetrySecs = 4;
 
+        public static readonly float PlayerIncrement = 0.2f;
+        public static readonly int MaxScore = 10;
+        public static readonly int ScoreIncrement =5;
         public static readonly string DefaultSnapshotPath = Application.dataPath + "/../../../snapshots/default.snapshot";
     }
 }

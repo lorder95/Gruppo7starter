@@ -10,6 +10,7 @@ using Improbable.Worker;
 using Improbable.Player;
 using Improbable.Collections;
 using Improbable.Unity.Core.EntityQueries;
+using System.Collections;
 
 namespace Assets.Gamelogic.Core
 {
@@ -20,17 +21,23 @@ namespace Assets.Gamelogic.Core
         private PlayerCreation.Writer PlayerCreationWriter;
         //[Require] private Status.Reader StatusReader;
 
+        private bool emptyRoom;
 
         private void OnEnable()
         {
             Debug.LogWarning("Enabled playercreator");
             PlayerCreationWriter.CommandReceiver.OnCreatePlayer.RegisterAsyncResponse(OnCreatePlayer);
+            emptyRoom = true;
+            StartCoroutine(SpawnWaves());
+            StartCoroutine(CheckOnlinePlayers());
             //StatusReader.GameWonTriggered.Add(ResetAll);
         }
 
         private void OnDisable()
         {
             PlayerCreationWriter.CommandReceiver.OnCreatePlayer.DeregisterResponse();
+            StopCoroutine(SpawnWaves());
+            StopCoroutine(CheckOnlinePlayers());
             //StatusReader.GameWonTriggered.Remove(ResetAll);
         }
         private void ResetAll(Win win) {
@@ -55,6 +62,42 @@ namespace Assets.Gamelogic.Core
               })
               .OnFailure(errorDetails => Debug.Log("Query failed with error: " + errorDetails));
         }
+
+        IEnumerator CheckOnlinePlayers() {
+            yield return new WaitForSeconds(1);
+            while (true) {
+                var query = Query.HasComponent<ClientConnection>().ReturnOnlyEntityIds();
+                SpatialOS.Commands.SendQuery(PlayerCreationWriter, query)
+                  .OnSuccess(result => {
+                      Debug.Log("Found " + result.EntityCount + " nearby entities with a health component");
+                      if (result.EntityCount < 1) {
+                          emptyRoom = true;
+                      } else {
+                          emptyRoom = false;
+                      }
+                      
+
+                  })
+                      .OnFailure(errorDetails => Debug.Log("Query failed with error: " + errorDetails));
+
+
+                yield return new WaitForSeconds(10);
+            }
+        }
+
+        IEnumerator SpawnWaves() {
+            yield return new WaitForSeconds(2);
+            while (true) {
+                if(emptyRoom == false) {
+                    var cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                    SpatialOS.Commands.CreateEntity(PlayerCreationWriter, cubeEntityTemplate);
+                }
+                
+
+
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
         private void OnCreatePlayer(ResponseHandle<PlayerCreation.Commands.CreatePlayer, CreatePlayerRequest, CreatePlayerResponse> responseHandle)
         {
             var clientWorkerId = responseHandle.CallerInfo.CallerWorkerId;
@@ -62,8 +105,8 @@ namespace Assets.Gamelogic.Core
             SpatialOS.Commands.CreateEntity (PlayerCreationWriter, playerEntityTemplate)
                 .OnSuccess (_ => responseHandle.Respond (new CreatePlayerResponse ((int) StatusCode.Success)))
                 .OnFailure (failure => responseHandle.Respond (new CreatePlayerResponse ((int) failure.StatusCode)));
-            var cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
-            SpatialOS.Commands.CreateEntity(PlayerCreationWriter, cubeEntityTemplate);
+            //var cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+            //SpatialOS.Commands.CreateEntity(PlayerCreationWriter, cubeEntityTemplate);
         }
     }
 }

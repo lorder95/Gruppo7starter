@@ -56,7 +56,12 @@ namespace Assets.Gamelogic.Player
             {
                 if (update.s.HasValue)
                 {
-                    offset= (new Vector3(offset.x, offset.y - 0.5F, offset.z + 0.5F));
+                    if(update.s.Value == 1.0f) {
+                        offset = new Vector3(0, -10, 9);
+                    } else {
+                        offset= (new Vector3(offset.x, offset.y - 0.3F, offset.z + 0.3F));
+                    }
+                    
                 }
             }
         }

@@ -30,7 +30,7 @@ namespace Assets.Gamelogic.EntityTemplates
             return playerCreatorEntityTemplate;
         }
 
-        public static Entity CreatePlayerTemplate(string clientId)
+        public static Entity CreatePlayerTemplate(string clientId, string colore)
         {
             float x = 18.0f;
             float y = 18.0f;
@@ -48,6 +48,7 @@ namespace Assets.Gamelogic.EntityTemplates
                 .AddComponent(new ClientAuthorityCheck.Data(), CommonRequirementSets.SpecificClientOnly(clientId))
                 .AddComponent(new ClientConnection.Data(SimulationSettings.TotalHeartbeatsBeforeTimeout), CommonRequirementSets.PhysicsOnly)
 				.AddComponent(new PlayerInput.Data(new Joystick(xAxis: 0, yAxis: 0)), CommonRequirementSets.SpecificClientOnly(clientId))
+                .AddComponent(new PlayerColor.Data(colore),CommonRequirementSets.PhysicsOnly)                                             
                 .Build();
             return playerTemplate;
         }

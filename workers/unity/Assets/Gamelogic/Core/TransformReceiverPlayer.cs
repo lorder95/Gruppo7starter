@@ -1,4 +1,5 @@
-﻿using Improbable;
+﻿using Assets.Gamelogic.UI;
+using Improbable;
 using Improbable.Core;
 using Improbable.Unity.Visualizer;
 using Improbable.Worker;
@@ -9,6 +10,7 @@ namespace Assets.Gamelogic.Core {
         [Require] private Position.Reader PositionReader;
         [Require] private Rotation.Reader RotationReader;
         [Require] private Scale.Reader ScaleReader;
+        [Require] private PlayerColor.Reader PlayerColorReader;
 
         void OnEnable() {
 
@@ -18,6 +20,7 @@ namespace Assets.Gamelogic.Core {
             PositionReader.ComponentUpdated.Add(OnPositionUpdated);
             RotationReader.ComponentUpdated.Add(OnRotationUpdated);
             ScaleReader.ComponentUpdated.Add(OnScaleUpdated);
+            GetComponent<SphereCollider>().GetComponent<MeshRenderer>().material.color = SplashScreenController.getColor(PlayerColorReader.Data.colore);
         }
 
         void OnDisable() {

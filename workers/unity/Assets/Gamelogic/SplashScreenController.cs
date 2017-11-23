@@ -18,6 +18,7 @@ namespace Assets.Gamelogic.UI
 		[SerializeField]
 		private InputField nameText;
 		public static Color color;
+        public static string colore;
 		public static string name;
 
 		public void AttemptToConnect()
@@ -39,13 +40,13 @@ namespace Assets.Gamelogic.UI
             // the splash screen so ConnectionTimeout won't be called
             FindObjectOfType<Bootstrap>().ConnectToClient();
 			StartCoroutine(TimerUtils.WaitAndPerform(SimulationSettings.ClientConnectionTimeoutSecs, ConnectionTimeout));
-			Text colore = colorDropdown.captionText;
-			string col = colore.text;
-			color = getColor (col);
+			Text col = colorDropdown.captionText;
+			colore = col.text;
+			color = getColor (colore);
 			name = nameText.text;
 		}
 
-		private Color getColor(string col){
+		public static Color getColor(string col){
 			Color c;
 			switch(col){
 			case "Black":

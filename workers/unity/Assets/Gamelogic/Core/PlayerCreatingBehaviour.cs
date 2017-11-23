@@ -11,6 +11,7 @@ using Improbable.Player;
 using Improbable.Collections;
 using Improbable.Unity.Core.EntityQueries;
 using System.Collections;
+using Assets.Gamelogic.UI;
 
 namespace Assets.Gamelogic.Core
 {
@@ -101,7 +102,7 @@ namespace Assets.Gamelogic.Core
         private void OnCreatePlayer(ResponseHandle<PlayerCreation.Commands.CreatePlayer, CreatePlayerRequest, CreatePlayerResponse> responseHandle)
         {
             var clientWorkerId = responseHandle.CallerInfo.CallerWorkerId;
-            var playerEntityTemplate = EntityTemplateFactory.CreatePlayerTemplate(clientWorkerId);
+            var playerEntityTemplate = EntityTemplateFactory.CreatePlayerTemplate(clientWorkerId,SplashScreenController.colore);
             SpatialOS.Commands.CreateEntity (PlayerCreationWriter, playerEntityTemplate)
                 .OnSuccess (_ => responseHandle.Respond (new CreatePlayerResponse ((int) StatusCode.Success)))
                 .OnFailure (failure => responseHandle.Respond (new CreatePlayerResponse ((int) failure.StatusCode)));

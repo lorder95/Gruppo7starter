@@ -4,13 +4,14 @@ using Improbable.Core;
 using Improbable.Unity.Visualizer;
 using Improbable.Worker;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Gamelogic.Core {
     public class TransformReceiverPlayer : MonoBehaviour {
         [Require] private Position.Reader PositionReader;
         [Require] private Rotation.Reader RotationReader;
         [Require] private Scale.Reader ScaleReader;
-        [Require] private PlayerColor.Reader PlayerColorReader;
+        [Require] private PlayerData.Reader PlayerDataReader;
 
         void OnEnable() {
 
@@ -20,7 +21,8 @@ namespace Assets.Gamelogic.Core {
             PositionReader.ComponentUpdated.Add(OnPositionUpdated);
             RotationReader.ComponentUpdated.Add(OnRotationUpdated);
             ScaleReader.ComponentUpdated.Add(OnScaleUpdated);
-            GetComponent<SphereCollider>().GetComponent<MeshRenderer>().material.color = SplashScreenController.getColor(PlayerColorReader.Data.colore);
+            transform.Find("Sphere").GetComponent<Renderer>().material.color = SplashScreenController.getColor(PlayerDataReader.Data.color);
+            GetComponentInChildren<Text>().text = PlayerDataReader.Data.name;
         }
 
         void OnDisable() {

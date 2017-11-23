@@ -1,6 +1,7 @@
 package improbable.core;
 
-component PlayerColor {
+component PlayerData {
     id = 1234;
-    string colore = 1;
+    string color = 1;
+	string name = 2;
 }

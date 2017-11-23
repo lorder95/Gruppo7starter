@@ -30,7 +30,7 @@ namespace Assets.Gamelogic.EntityTemplates
             return playerCreatorEntityTemplate;
         }
 
-        public static Entity CreatePlayerTemplate(string clientId, string colore)
+        public static Entity CreatePlayerTemplate(string clientId, string color, string name)
         {
             float x = 18.0f;
             float y = 18.0f;
@@ -48,7 +48,7 @@ namespace Assets.Gamelogic.EntityTemplates
                 .AddComponent(new ClientAuthorityCheck.Data(), CommonRequirementSets.SpecificClientOnly(clientId))
                 .AddComponent(new ClientConnection.Data(SimulationSettings.TotalHeartbeatsBeforeTimeout), CommonRequirementSets.PhysicsOnly)
 				.AddComponent(new PlayerInput.Data(new Joystick(xAxis: 0, yAxis: 0)), CommonRequirementSets.SpecificClientOnly(clientId))
-                .AddComponent(new PlayerColor.Data(colore),CommonRequirementSets.PhysicsOnly)                                             
+                .AddComponent(new PlayerData.Data(color, name),CommonRequirementSets.PhysicsOnly)                                             
                 .Build();
             return playerTemplate;
         }
@@ -68,8 +68,8 @@ namespace Assets.Gamelogic.EntityTemplates
 
         public static Entity CreateCubeTemplate()
         {
-            float x = 18.0f;
-            float y = 18.0f;
+            float x = 36.0f;
+            float y = 36.0f;
             float xCoord = Random.Range(x, -x);
             float yCoord = Random.Range(y, -y);
             var cubeTemplate = EntityBuilder.Begin()

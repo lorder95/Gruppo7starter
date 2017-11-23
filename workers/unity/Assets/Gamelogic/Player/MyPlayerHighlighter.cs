@@ -28,8 +28,7 @@ public class MyPlayerHighlighter : MonoBehaviour
 
 	{
 
-		playerBody.GetComponent<Renderer>().material.color = SplashScreenController.color;
-		name.text = SplashScreenController.name;
+
 }
 
 }

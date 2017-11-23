@@ -28,7 +28,7 @@ public class PlayerInputSender : MonoBehaviour
     private Text totalPointsGUI;
 
     private void Awake() {
-        scoreCanvasUI = GameObject.Find("Canvas");
+        scoreCanvasUI = GameObject.Find("ScoreCanvas");
         if (scoreCanvasUI) {
             totalPointsGUI = scoreCanvasUI.GetComponentInChildren<Text>();
             scoreCanvasUI.SetActive(true);

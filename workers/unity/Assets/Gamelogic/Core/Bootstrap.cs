@@ -14,6 +14,7 @@ namespace Assets.Gamelogic.Core
 	{
 		public WorkerConfigurationData Configuration = new WorkerConfigurationData();
 
+
 		// Called when the Play button is pressed in Unity.
 		public void Start()
 		{
@@ -78,7 +79,11 @@ namespace Assets.Gamelogic.Core
 		private static void RequestPlayerCreation(EntityId playerCreatorEntityId)
 		{
             Debug.LogWarning("Player created request");
-            SpatialOS.WorkerCommands.SendCommand(PlayerCreation.Commands.CreatePlayer.Descriptor, new CreatePlayerRequest(), playerCreatorEntityId)
+            string color, name;
+            color = FindObjectOfType<UI.SplashScreenController>().GetColor();
+            name = FindObjectOfType<UI.SplashScreenController>().GetName();
+            Debug.LogWarning("Request: " + color + " - " + name);
+            SpatialOS.WorkerCommands.SendCommand(PlayerCreation.Commands.CreatePlayer.Descriptor, new CreatePlayerRequest(color, name), playerCreatorEntityId)
 				.OnFailure(response => OnCreatePlayerFailure(response, playerCreatorEntityId));
 		}
 

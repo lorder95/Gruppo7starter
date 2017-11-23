@@ -17,10 +17,16 @@ namespace Assets.Gamelogic.UI
 		private Dropdown colorDropdown;
 		[SerializeField]
 		private InputField nameText;
-		public static Color color;
-        public static string colore;
-		public static string name;
+		private Color color;
+        private string colore;
+		private string name;
 
+        public string GetName() {
+            return name;
+        }
+        public string GetColor() {
+            return colore;
+        }
 		public void AttemptToConnect()
 		{
             Debug.LogWarning("Attempt to connect");
@@ -38,12 +44,14 @@ namespace Assets.Gamelogic.UI
             Debug.LogWarning("Attempt connection");
             // In case the client connection is successful this coroutine is destroyed as part of unloading
             // the splash screen so ConnectionTimeout won't be called
+            Text col = colorDropdown.captionText;
+            colore = col.text;
+			name = nameText.text;
+            Debug.LogWarning("Dati inseriti: " + colore + " - " + name);
             FindObjectOfType<Bootstrap>().ConnectToClient();
 			StartCoroutine(TimerUtils.WaitAndPerform(SimulationSettings.ClientConnectionTimeoutSecs, ConnectionTimeout));
-			Text col = colorDropdown.captionText;
-			colore = col.text;
-			color = getColor (colore);
-			name = nameText.text;
+			
+			
 		}
 
 		public static Color getColor(string col){

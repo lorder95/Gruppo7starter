@@ -1,8 +1,12 @@
 package improbable.core;
 
-type CreatePlayerRequest {}
+type CreatePlayerRequest {
+	string player_color = 1;
+	string player_name= 2;
+}
 type CreatePlayerResponse {
     int32 status_code = 1;
+
 }
 
 component PlayerCreation {

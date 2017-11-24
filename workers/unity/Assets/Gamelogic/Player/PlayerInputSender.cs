@@ -12,6 +12,9 @@ using Assets.Gamelogic.Core;
 using Improbable.Unity.Core;
 using Improbable.Core;
 using UnityEngine.UI;
+using Improbable.Entity.Component;
+using Improbable.Collections;
+using System;
 
 [WorkerType(WorkerPlatform.UnityClient)]
 
@@ -22,6 +25,7 @@ public class PlayerInputSender : MonoBehaviour
 	[Require] private PlayerInput.Writer PlayerInputWriter;
     [Require] private Status.Reader StatusReader;
     [Require] private Scale.Reader ScaleReader;
+    [Require] private Scoreboard.Writer ScoreboardWriter;
     [SerializeField] private GameObject Model;
 
     private GameObject scoreCanvasUI;
@@ -40,15 +44,30 @@ public class PlayerInputSender : MonoBehaviour
 
 
         StatusReader.PlayerDeadTriggered.Add(BackToSplash);
+        ScoreboardWriter.CommandReceiver.OnSendScoreboard.RegisterResponse(OnUpdateScoreboard);
         ScaleReader.ComponentUpdated.Add(OnNumberOfPointsUpdated);
 
     }
 
     private void OnDisable() {
         StatusReader.PlayerDeadTriggered.Remove(BackToSplash);
+        ScoreboardWriter.CommandReceiver.OnSendScoreboard.DeregisterResponse();
         ScaleReader.ComponentUpdated.Remove(OnNumberOfPointsUpdated);
     }
+    private ScoreResponse OnUpdateScoreboard(ScoreRequest request, ICommandCallerInfo callerInfo) {
+        List<ScoreEntry> points = request.points;
 
+        for (int i = 0; i < 5; i++) {
+            if(i < points.Count) {
+                scoreCanvasUI.transform.Find("Position" + i).GetComponentInChildren<Text>().text = points[i].name + ": " + points[i].value;
+            } else {
+                scoreCanvasUI.transform.Find("Position" + i).GetComponentInChildren<Text>().text = "";
+            }
+            
+        }
+        return new ScoreResponse();
+
+    }
     void BackToSplash(Dead dead) {
         Debug.LogWarning("Called backtosplash");
         PlayerInputWriter.Send(new PlayerInput.Update().AddRespawn(new Respawn()));     

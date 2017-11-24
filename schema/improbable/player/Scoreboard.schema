@@ -1,0 +1,17 @@
+package improbable.player;
+
+type ScoreResponse{}
+type ScoreRequest{
+	list<ScoreEntry> points = 1;
+}
+type ScoreEntry{
+	string name = 1;
+	uint32 value = 2;
+}
+
+component Scoreboard {
+    // Component ID, unique within the project
+    id = 2006;
+	
+	command ScoreResponse send_scoreboard(ScoreRequest);
+}

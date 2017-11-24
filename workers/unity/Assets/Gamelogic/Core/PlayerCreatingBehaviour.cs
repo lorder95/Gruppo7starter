@@ -8,10 +8,11 @@ using Improbable.Unity.Visualizer;
 using UnityEngine;
 using Improbable.Worker;
 using Improbable.Player;
-using Improbable.Collections;
 using Improbable.Unity.Core.EntityQueries;
 using System.Collections;
 using Assets.Gamelogic.UI;
+using System.Collections.Generic;
+using System;
 
 namespace Assets.Gamelogic.Core
 {
@@ -23,6 +24,7 @@ namespace Assets.Gamelogic.Core
         //[Require] private Status.Reader StatusReader;
 
         private bool emptyRoom;
+        private List<EntityId> ids;
 
         private void OnEnable()
         {
@@ -31,16 +33,54 @@ namespace Assets.Gamelogic.Core
             emptyRoom = true;
             StartCoroutine(SpawnWaves());
             StartCoroutine(CheckOnlinePlayers());
+            StartCoroutine(UpdateScoreboard());
+            ids = new List<EntityId>();
+
             //StatusReader.GameWonTriggered.Add(ResetAll);
         }
-
+        
         private void OnDisable()
         {
             PlayerCreationWriter.CommandReceiver.OnCreatePlayer.DeregisterResponse();
             StopCoroutine(SpawnWaves());
             StopCoroutine(CheckOnlinePlayers());
+            StopCoroutine(UpdateScoreboard());
             //StatusReader.GameWonTriggered.Remove(ResetAll);
         }
+
+        private IEnumerator UpdateScoreboard() {
+            while (true) {
+                yield return new WaitForSeconds(1);
+                List<KeyValuePair<string, int>> points = new List<KeyValuePair<string, int>>();
+                ClearList();
+                foreach(EntityId id in ids) {
+                    float scale = SpatialOS.GetLocalEntityComponent<Scale>(id).Get().Value.s;
+                    int point = (int)(scale * SimulationSettings.ScoreIncrement - (SimulationSettings.ScoreIncrement - 1));
+                    //Debug.LogWarning("foreach: " + scale + " - " + point);
+                    string name = SpatialOS.GetLocalEntityComponent<PlayerData>(id).Get().Value.name;
+                    points.Add(new KeyValuePair<string, int>(name, point));
+                }
+                points.Sort((x, y) => y.Value.CompareTo(x.Value));
+                ScoreRequest sr = new ScoreRequest();
+                Improbable.Collections.List<ScoreEntry> topFive = new Improbable.Collections.List<ScoreEntry>();
+                for(int i = 0; i<Math.Min(5, points.Count); i++) {
+                    ScoreEntry entry = new ScoreEntry();
+                    KeyValuePair<string, int> kvEntry = points[i];
+                    entry.name = kvEntry.Key;
+                    entry.value = (uint)kvEntry.Value;
+                    topFive.Add(entry);
+                    //Debug.LogWarning(entry.name + " - " + entry.value + " - " +kvEntry.ToString());
+                }
+                sr.points = topFive;
+
+
+                foreach(EntityId id in ids) {
+                    SpatialOS.Commands.SendCommand(PlayerCreationWriter, Scoreboard.Commands.SendScoreboard.Descriptor, sr, id);
+                }
+
+            }
+        }
+
         private void ResetAll(Win win) {
             Debug.LogWarning("Reset all");
 
@@ -53,7 +93,7 @@ namespace Assets.Gamelogic.Core
                   if (result.EntityCount < 1) {
                       return;
                   }
-                  Map<EntityId, Entity> resultMap = result.Entities;
+                  Improbable.Collections.Map<EntityId, Entity> resultMap = result.Entities;
                   EntityId id = resultMap.First.Value.Key;
                   Entity entity = SpatialOS.GetLocalEntity(id);
                   if(entity != null) {
@@ -104,11 +144,29 @@ namespace Assets.Gamelogic.Core
             Debug.LogWarning("CreatePlayer: " + responseHandle.Request.playerColor + " - " + responseHandle.Request.playerName);
             var clientWorkerId = responseHandle.CallerInfo.CallerWorkerId;
             var playerEntityTemplate = EntityTemplateFactory.CreatePlayerTemplate(clientWorkerId,responseHandle.Request.playerColor, responseHandle.Request.playerName);
-            SpatialOS.Commands.CreateEntity (PlayerCreationWriter, playerEntityTemplate)
-                .OnSuccess (_ => responseHandle.Respond (new CreatePlayerResponse ((int) StatusCode.Success)))
+            SpatialOS.Commands.CreateEntity(PlayerCreationWriter, playerEntityTemplate)
+                //.OnSuccess ( _ => responseHandle.Respond(new CreatePlayerResponse((int)StatusCode.Success)))
+                .OnSuccess (response => responseHandle.Respond(AddEntity(response)))
                 .OnFailure (failure => responseHandle.Respond (new CreatePlayerResponse ((int) failure.StatusCode)));
             //var cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
             //SpatialOS.Commands.CreateEntity(PlayerCreationWriter, cubeEntityTemplate);
+        }
+
+        private CreatePlayerResponse AddEntity(CreateEntityResult response) {
+            EntityId playerId = response.CreatedEntityId;
+            ids.Add(playerId);
+            return new CreatePlayerResponse((int)StatusCode.Success);
+        }
+
+        private void ClearList() {
+            List<EntityId> newIds = new List<EntityId>();
+            foreach(EntityId id in ids) {
+                Entity e = SpatialOS.GetLocalEntity(id);
+                if(e != null) {
+                    newIds.Add(id);
+                }
+            }
+            ids = newIds;
         }
     }
 }

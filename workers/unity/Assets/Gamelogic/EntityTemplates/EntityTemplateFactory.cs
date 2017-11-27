@@ -32,8 +32,8 @@ namespace Assets.Gamelogic.EntityTemplates
 
         public static Entity CreatePlayerTemplate(string clientId, string color, string name)
         {
-            float x = 18.0f;
-            float y = 18.0f;
+            float x = 80.0f;
+            float y = 80.0f;
             float xCoord = Random.Range(x, -x);
             float yCoord = Random.Range(y, -y);
             var playerTemplate = EntityBuilder.Begin()
@@ -69,8 +69,8 @@ namespace Assets.Gamelogic.EntityTemplates
 
         public static Entity CreateCubeTemplate()
         {
-            float x = 36.0f;
-            float y = 36.0f;
+            float x = 90.0f;
+            float y = 90.0f;
             float xCoord = Random.Range(x, -x);
             float yCoord = Random.Range(y, -y);
             var cubeTemplate = EntityBuilder.Begin()

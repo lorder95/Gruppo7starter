@@ -19,6 +19,8 @@ namespace Assets.Gamelogic.Player
 
         private void OnEnable()
         {
+
+            Debug.LogWarning("Camera enabled");
             
             // Grab the camera from the Unity scene
             camera = Camera.main.transform;
@@ -57,13 +59,16 @@ namespace Assets.Gamelogic.Player
         // If the user holds right mouse button and moves their mouse about, the camera rotates around the player
         private void SelectNextCameraRotation()
         {
+
             if (Input.GetMouseButton(SimulationSettings.RotateCameraMouseButton))
             {
+                
                 var yaw = (cameraRotation.eulerAngles.y + Input.GetAxis("Mouse X") * SimulationSettings.ThirdPersonCameraSensitivity) % 360f;
                 var pitch = Mathf.Clamp(cameraRotation.eulerAngles.x - Input.GetAxis("Mouse Y") * SimulationSettings.ThirdPersonCameraSensitivity,
                         SimulationSettings.ThirdPersonCameraMinPitch,
                         SimulationSettings.ThirdPersonCameraMaxPitch);
                 cameraRotation = UnityEngine.Quaternion.Euler(new Vector3(pitch, yaw, 0));
+                //Debug.LogWarning("Clicked: " + cameraRotation.ToString());
             }
         }
 
@@ -76,9 +81,11 @@ namespace Assets.Gamelogic.Player
         private void SetCameraTransform()
         {
             // Set the position of the camera based on the desired rotation towards and distance from the Player model
-            camera.localPosition = cameraRotation * Vector3.back * cameraDistance;
+            camera.localPosition = transform.position+(cameraRotation * Vector3.back * cameraDistance);
             // Set the camera to look towards the Player model
-            camera.position=transform.position-offset;
+            //camera.position=transform.position-offset;
+
+            camera.LookAt(transform.position);
         }
 
         void OnScaleUpdated(Scale.Update update)

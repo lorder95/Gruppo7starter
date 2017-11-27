@@ -14,23 +14,20 @@ using Assets.Gamelogic.UI;
 using System.Collections.Generic;
 using System;
 
-namespace Assets.Gamelogic.Core
-{
+namespace Assets.Gamelogic.Core {
     [WorkerType(WorkerPlatform.UnityWorker)]
-    public class PlayerCreatingBehaviour : MonoBehaviour
-    {
+    public class PlayerCreatingBehaviour : MonoBehaviour {
         [Require]
         private PlayerCreation.Writer PlayerCreationWriter;
         //[Require] private Status.Reader StatusReader;
 
-        private bool emptyRoom;
+        private int queryResult;
         private List<EntityId> ids;
 
-        private void OnEnable()
-        {
+        private void OnEnable() {
             Debug.LogWarning("Enabled playercreator");
             PlayerCreationWriter.CommandReceiver.OnCreatePlayer.RegisterAsyncResponse(OnCreatePlayer);
-            emptyRoom = true;
+            queryResult = 0;
             StartCoroutine(SpawnWaves());
             StartCoroutine(CheckOnlinePlayers());
             StartCoroutine(UpdateScoreboard());
@@ -38,9 +35,8 @@ namespace Assets.Gamelogic.Core
 
             //StatusReader.GameWonTriggered.Add(ResetAll);
         }
-        
-        private void OnDisable()
-        {
+
+        private void OnDisable() {
             PlayerCreationWriter.CommandReceiver.OnCreatePlayer.DeregisterResponse();
             StopCoroutine(SpawnWaves());
             StopCoroutine(CheckOnlinePlayers());
@@ -53,7 +49,7 @@ namespace Assets.Gamelogic.Core
                 yield return new WaitForSeconds(1);
                 List<KeyValuePair<string, int>> points = new List<KeyValuePair<string, int>>();
                 ClearList();
-                foreach(EntityId id in ids) {
+                foreach (EntityId id in ids) {
                     float scale = SpatialOS.GetLocalEntityComponent<Scale>(id).Get().Value.s;
                     int point = (int)(scale * SimulationSettings.ScoreIncrement - (SimulationSettings.ScoreIncrement - 1));
                     //Debug.LogWarning("foreach: " + scale + " - " + point);
@@ -63,7 +59,7 @@ namespace Assets.Gamelogic.Core
                 points.Sort((x, y) => y.Value.CompareTo(x.Value));
                 ScoreRequest sr = new ScoreRequest();
                 Improbable.Collections.List<ScoreEntry> topFive = new Improbable.Collections.List<ScoreEntry>();
-                for(int i = 0; i<Math.Min(5, points.Count); i++) {
+                for (int i = 0; i < Math.Min(5, points.Count); i++) {
                     ScoreEntry entry = new ScoreEntry();
                     KeyValuePair<string, int> kvEntry = points[i];
                     entry.name = kvEntry.Key;
@@ -74,7 +70,7 @@ namespace Assets.Gamelogic.Core
                 sr.points = topFive;
 
 
-                foreach(EntityId id in ids) {
+                foreach (EntityId id in ids) {
                     SpatialOS.Commands.SendCommand(PlayerCreationWriter, Scoreboard.Commands.SendScoreboard.Descriptor, sr, id);
                 }
 
@@ -96,7 +92,7 @@ namespace Assets.Gamelogic.Core
                   Improbable.Collections.Map<EntityId, Entity> resultMap = result.Entities;
                   EntityId id = resultMap.First.Value.Key;
                   Entity entity = SpatialOS.GetLocalEntity(id);
-                  if(entity != null) {
+                  if (entity != null) {
                       Debug.Log("entity found");
                   }
                   //StatusWriter.Send(new Status.Update().AddGameOver(new GameOver()));
@@ -110,13 +106,9 @@ namespace Assets.Gamelogic.Core
                 var query = Query.HasComponent<ClientConnection>().ReturnOnlyEntityIds();
                 SpatialOS.Commands.SendQuery(PlayerCreationWriter, query)
                   .OnSuccess(result => {
-                      Debug.Log("Found " + result.EntityCount + " nearby entities with a health component");
-                      if (result.EntityCount < 1) {
-                          emptyRoom = true;
-                      } else {
-                          emptyRoom = false;
-                      }
-                      
+                      Debug.Log("Found " + result.EntityCount + " nearby entities with a ClientConnection component");
+                      queryResult = result.EntityCount;
+
 
                   })
                       .OnFailure(errorDetails => Debug.Log("Query failed with error: " + errorDetails));
@@ -127,27 +119,53 @@ namespace Assets.Gamelogic.Core
         }
 
         IEnumerator SpawnWaves() {
-            yield return new WaitForSeconds(2);
+
+            Entity cubeEntityTemplate;
             while (true) {
-                if(emptyRoom == false) {
-                    var cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                float time = 0.2f;
+                if (queryResult > 0) {
+                    if (queryResult < 3) {
+                        time = 0.5f;
+                        int v = UnityEngine.Random.Range(1, 3);
+                        if (v == 1) {
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                        } else {
+                            //red cube
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                        }
+                    } else if (queryResult < 11) {
+                        int v = UnityEngine.Random.Range(1, 11);
+                        if (v < 5) {
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                        } else {
+                            //red cube
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                        }
+                    } else {
+                        time = 0.05f;
+                        int v = UnityEngine.Random.Range(1, 11);
+                        if (v < 2) {
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                        } else {
+                            //red cube
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                        }
+                    }
+
+
                     SpatialOS.Commands.CreateEntity(PlayerCreationWriter, cubeEntityTemplate);
                 }
-                
-
-
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(time);
             }
         }
-        private void OnCreatePlayer(ResponseHandle<PlayerCreation.Commands.CreatePlayer, CreatePlayerRequest, CreatePlayerResponse> responseHandle)
-        {
+        private void OnCreatePlayer(ResponseHandle<PlayerCreation.Commands.CreatePlayer, CreatePlayerRequest, CreatePlayerResponse> responseHandle) {
             Debug.LogWarning("CreatePlayer: " + responseHandle.Request.playerColor + " - " + responseHandle.Request.playerName);
             var clientWorkerId = responseHandle.CallerInfo.CallerWorkerId;
-            var playerEntityTemplate = EntityTemplateFactory.CreatePlayerTemplate(clientWorkerId,responseHandle.Request.playerColor, responseHandle.Request.playerName);
+            var playerEntityTemplate = EntityTemplateFactory.CreatePlayerTemplate(clientWorkerId, responseHandle.Request.playerColor, responseHandle.Request.playerName);
             SpatialOS.Commands.CreateEntity(PlayerCreationWriter, playerEntityTemplate)
                 //.OnSuccess ( _ => responseHandle.Respond(new CreatePlayerResponse((int)StatusCode.Success)))
-                .OnSuccess (response => responseHandle.Respond(AddEntity(response)))
-                .OnFailure (failure => responseHandle.Respond (new CreatePlayerResponse ((int) failure.StatusCode)));
+                .OnSuccess(response => responseHandle.Respond(AddEntity(response)))
+                .OnFailure(failure => responseHandle.Respond(new CreatePlayerResponse((int)failure.StatusCode)));
             //var cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
             //SpatialOS.Commands.CreateEntity(PlayerCreationWriter, cubeEntityTemplate);
         }
@@ -160,9 +178,9 @@ namespace Assets.Gamelogic.Core
 
         private void ClearList() {
             List<EntityId> newIds = new List<EntityId>();
-            foreach(EntityId id in ids) {
+            foreach (EntityId id in ids) {
                 Entity e = SpatialOS.GetLocalEntity(id);
-                if(e != null) {
+                if (e != null) {
                     newIds.Add(id);
                 }
             }

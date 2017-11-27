@@ -33,6 +33,7 @@ public class PlayerInputSender : MonoBehaviour
 
     private void Awake() {
         scoreCanvasUI = GameObject.Find("ScoreCanvas");
+
         if (scoreCanvasUI) {
             totalPointsGUI = scoreCanvasUI.GetComponentInChildren<Text>();
             scoreCanvasUI.SetActive(true);
@@ -41,7 +42,7 @@ public class PlayerInputSender : MonoBehaviour
     }
 
     void OnEnable() {
-
+        GetComponent<AudioSource>().Play();
 
         StatusReader.PlayerDeadTriggered.Add(BackToSplash);
         ScoreboardWriter.CommandReceiver.OnSendScoreboard.RegisterResponse(OnUpdateScoreboard);
@@ -93,12 +94,14 @@ public class PlayerInputSender : MonoBehaviour
 
 	{
         //Debug.LogWarning("A");
-        var speedMultiplier = 3;
+   
 
-		var xAxis = Input.GetAxis("Horizontal")* speedMultiplier;
+		var xAxis = Input.GetAxis("Horizontal");
 
-		var yAxis = Input.GetAxis("Vertical")* speedMultiplier;
+		var yAxis = Input.GetAxis("Vertical");
 
+        Vector3 targetDirection = new Vector3(xAxis, 0f, yAxis);
+        targetDirection = Camera.main.transform.TransformDirection(targetDirection);
 
         if (Input.GetKeyDown(KeyCode.R)) {
             Debug.LogWarning("A");
@@ -112,7 +115,7 @@ public class PlayerInputSender : MonoBehaviour
 
         var update = new PlayerInput.Update();
 
-		update.SetJoystick(new Joystick(xAxis, yAxis));
+		update.SetJoystick(new Joystick(targetDirection.x, targetDirection.z));
         
 		PlayerInputWriter.Send(update);
 

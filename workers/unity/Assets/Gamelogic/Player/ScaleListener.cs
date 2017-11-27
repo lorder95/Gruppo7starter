@@ -48,6 +48,8 @@ public class ScaleListener : MonoBehaviour {
     private void OnGameWinFailure(ICommandErrorDetails response) {
         Debug.LogError("Failed to send GameWin command with error: " + response.ErrorMessage);
     }
+
+
     void ResetQuery() {
 
         Debug.LogWarning("called reset");

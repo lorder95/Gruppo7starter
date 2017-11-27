@@ -30,5 +30,14 @@ namespace Assets.Gamelogic.Core
         public static readonly int MaxScore = 10;
         public static readonly int ScoreIncrement =5;
         public static readonly string DefaultSnapshotPath = Application.dataPath + "/../../../snapshots/default.snapshot";
+
+        public static readonly string MouseScrollWheel = "Mouse ScrollWheel";
+        public static readonly float ThirdPersonZoomSensitivity = 3f;
+        public static readonly float ThirdPersonCameraMinDistance = 4f;
+        public static readonly float ThirdPersonCameraMaxDistance = 20f;
+        public static readonly int RotateCameraMouseButton = 1;
+        public static readonly float ThirdPersonCameraSensitivity = 2f;
+        public static readonly float ThirdPersonCameraMinPitch = 5f;
+        public static readonly float ThirdPersonCameraMaxPitch = 70f;
     }
 }

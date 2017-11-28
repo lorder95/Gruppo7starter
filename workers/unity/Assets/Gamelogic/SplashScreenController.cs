@@ -11,7 +11,9 @@ namespace Assets.Gamelogic.UI
 	{
 		[SerializeField]
 		private GameObject NotReadyWarning;
-		[SerializeField]
+        [SerializeField]
+        private GameObject NameWarning;
+        [SerializeField]
 		private Button ConnectButton;
 		[SerializeField]
 		private Dropdown colorDropdown;
@@ -30,26 +32,38 @@ namespace Assets.Gamelogic.UI
 		public void AttemptToConnect()
 		{
             Debug.LogWarning("Attempt to connect");
-            // Disable connect button
-            ConnectButton.interactable = false;
-
-			// Hide warning if already shown
-			NotReadyWarning.SetActive(false);
-
 			AttemptConnection();
 		}
 
 		private void AttemptConnection()
 		{
+
+
             Debug.LogWarning("Attempt connection");
             // In case the client connection is successful this coroutine is destroyed as part of unloading
             // the splash screen so ConnectionTimeout won't be called
             Text col = colorDropdown.captionText;
             colore = col.text;
 			name = nameText.text;
-            Debug.LogWarning("Dati inseriti: " + colore + " - " + name);
-            FindObjectOfType<Bootstrap>().ConnectToClient();
-			StartCoroutine(TimerUtils.WaitAndPerform(SimulationSettings.ClientConnectionTimeoutSecs, ConnectionTimeout));
+            if(name.Length>=1 && name.Length < 15) {
+
+                // Disable connect button
+                ConnectButton.interactable = false;
+
+                // Hide warning if already shown
+                NotReadyWarning.SetActive(false);
+                NameWarning.SetActive(false);
+
+                NameWarning.SetActive(false);
+                Debug.LogWarning("Dati inseriti: " + colore + " - " + name);
+                FindObjectOfType<Bootstrap>().ConnectToClient();
+			    StartCoroutine(TimerUtils.WaitAndPerform(SimulationSettings.ClientConnectionTimeoutSecs, ConnectionTimeout));
+            } else {
+                NameWarning.SetActive(true);
+
+
+            }
+            
 			
 			
 		}

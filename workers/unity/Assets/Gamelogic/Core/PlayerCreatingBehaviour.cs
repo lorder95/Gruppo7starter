@@ -17,6 +17,22 @@ using System;
 namespace Assets.Gamelogic.Core {
     [WorkerType(WorkerPlatform.UnityWorker)]
     public class PlayerCreatingBehaviour : MonoBehaviour {
+
+        class SpawnArea {
+            float area;
+            Vector3 pos;
+            public SpawnArea(Vector3 pos, float area) {
+                this.pos = pos;
+                this.area = area;
+            }
+            public float GetArea() {
+                return area;
+            }
+            public Vector3 GetPos() {
+                return pos;
+            }
+        }
+
         [Require]
         private PlayerCreation.Writer PlayerCreationWriter;
         //[Require] private Status.Reader StatusReader;
@@ -24,14 +40,28 @@ namespace Assets.Gamelogic.Core {
         private int queryResult;
         private List<EntityId> ids;
 
+        List<SpawnArea> positions;
+
         private void OnEnable() {
             Debug.LogWarning("Enabled playercreator");
             PlayerCreationWriter.CommandReceiver.OnCreatePlayer.RegisterAsyncResponse(OnCreatePlayer);
             queryResult = 0;
+            
+            ids = new List<EntityId>();
+
+            positions = new List<SpawnArea>();
+            positions.Add(new SpawnArea(new Vector3(0, 0.5f, 0), 36.0f));
+            positions.Add(new SpawnArea(new Vector3(0, 20.5f, 107),7.0f));
+            positions.Add(new SpawnArea(new Vector3(0, 20.5f, -107), 7.0f));
+            positions.Add(new SpawnArea(new Vector3(107, -19.5f, 0), 7.0f));
+            positions.Add(new SpawnArea(new Vector3(-107, -19.5f, 0), 7.0f));
+
+
+
+
             StartCoroutine(SpawnWaves());
             StartCoroutine(CheckOnlinePlayers());
             StartCoroutine(UpdateScoreboard());
-            ids = new List<EntityId>();
 
             //StatusReader.GameWonTriggered.Add(ResetAll);
         }
@@ -122,33 +152,42 @@ namespace Assets.Gamelogic.Core {
 
             Entity cubeEntityTemplate;
             while (true) {
-                float time = 0.2f;
+
+
+
+                var random = UnityEngine.Random.Range(0, 9);
+                if (random >= positions.Count) {
+                    random = 0;
+                }
+                var pos = RandomOnPlane(positions[random]);
+
+                float time = 0.18f;
                 if (queryResult > 0) {
                     if (queryResult < 3) {
-                        time = 0.5f;
+                        time = 0.4f;
                         int v = UnityEngine.Random.Range(1, 3);
                         if (v == 1) {
-                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate(pos);
                         } else {
                             //red cube
-                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate2();
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate2(pos);
                         }
                     } else if (queryResult < 11) {
                         int v = UnityEngine.Random.Range(1, 11);
                         if (v < 5) {
-                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate(pos);
                         } else {
                             //red cube
-                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate2();
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate2(pos);
                         }
                     } else {
-                        time = 0.05f;
+                        time = 0.025f;
                         int v = UnityEngine.Random.Range(1, 11);
                         if (v < 2) {
-                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate(pos);
                         } else {
                             //red cube
-                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate2();
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate2(pos);
                         }
                     }
 
@@ -185,6 +224,14 @@ namespace Assets.Gamelogic.Core {
                 }
             }
             ids = newIds;
+        }
+
+        private Vector3 RandomOnPlane(SpawnArea plane) {
+            var dist = plane.GetArea();
+            float x = UnityEngine.Random.Range(dist, -dist);
+            float z = UnityEngine.Random.Range(dist, -dist);
+            return plane.GetPos() + new Vector3(x, 0, z);
+
         }
     }
 }

@@ -32,8 +32,8 @@ namespace Assets.Gamelogic.EntityTemplates
 
         public static Entity CreatePlayerTemplate(string clientId, string color, string name)
         {
-            float x = 80.0f;
-            float y = 80.0f;
+            float x = 36.0f;
+            float y = 36.0f;
             float xCoord = Random.Range(x, -x);
             float yCoord = Random.Range(y, -y);
             var playerTemplate = EntityBuilder.Begin()
@@ -67,14 +67,11 @@ namespace Assets.Gamelogic.EntityTemplates
                 .Build();
         }
 
-        public static Entity CreateCubeTemplate()
+        public static Entity CreateCubeTemplate(Vector3 pos)
         {
-            float x = 90.0f;
-            float y = 90.0f;
-            float xCoord = Random.Range(x, -x);
-            float yCoord = Random.Range(y, -y);
+
             var cubeTemplate = EntityBuilder.Begin()
-                .AddPositionComponent(new Vector3 (xCoord,0.45f,yCoord), CommonRequirementSets.PhysicsOnly)
+                .AddPositionComponent(pos, CommonRequirementSets.PhysicsOnly)
                 .AddMetadataComponent(entityType: SimulationSettings.CubePrefabName)
                 .SetPersistence(true)
                 .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
@@ -83,14 +80,10 @@ namespace Assets.Gamelogic.EntityTemplates
 
             return cubeTemplate;
         }
-        public static Entity CreateCubeTemplate2()
+        public static Entity CreateCubeTemplate2(Vector3 pos)
         {
-            float x = 90.0f;
-            float y = 90.0f;
-            float xCoord = Random.Range(x, -x);
-            float yCoord = Random.Range(y, -y);
             var cubeTemplate = EntityBuilder.Begin()
-                .AddPositionComponent(new Vector3(xCoord, 0.45f, yCoord), CommonRequirementSets.PhysicsOnly)
+                .AddPositionComponent(pos, CommonRequirementSets.PhysicsOnly)
                 .AddMetadataComponent(entityType: SimulationSettings.CubePrefabName2)
                 .SetPersistence(true)
                 .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
@@ -99,5 +92,9 @@ namespace Assets.Gamelogic.EntityTemplates
 
             return cubeTemplate;
         }
+
+
+
     }
+
 }

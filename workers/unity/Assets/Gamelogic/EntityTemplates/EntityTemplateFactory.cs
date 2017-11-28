@@ -83,5 +83,21 @@ namespace Assets.Gamelogic.EntityTemplates
 
             return cubeTemplate;
         }
+        public static Entity CreateCubeTemplate2()
+        {
+            float x = 90.0f;
+            float y = 90.0f;
+            float xCoord = Random.Range(x, -x);
+            float yCoord = Random.Range(y, -y);
+            var cubeTemplate = EntityBuilder.Begin()
+                .AddPositionComponent(new Vector3(xCoord, 0.45f, yCoord), CommonRequirementSets.PhysicsOnly)
+                .AddMetadataComponent(entityType: SimulationSettings.CubePrefabName2)
+                .SetPersistence(true)
+                .SetReadAcl(CommonRequirementSets.PhysicsOrVisual)
+                .AddComponent(new Rotation.Data(Quaternion.identity.ToNativeQuaternion()), CommonRequirementSets.PhysicsOnly)
+                .Build();
+
+            return cubeTemplate;
+        }
     }
 }

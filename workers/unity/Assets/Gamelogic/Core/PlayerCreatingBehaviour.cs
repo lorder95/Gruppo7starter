@@ -131,7 +131,7 @@ namespace Assets.Gamelogic.Core {
                             cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
                         } else {
                             //red cube
-                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate2();
                         }
                     } else if (queryResult < 11) {
                         int v = UnityEngine.Random.Range(1, 11);
@@ -139,7 +139,7 @@ namespace Assets.Gamelogic.Core {
                             cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
                         } else {
                             //red cube
-                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate2();
                         }
                     } else {
                         time = 0.05f;
@@ -148,7 +148,7 @@ namespace Assets.Gamelogic.Core {
                             cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
                         } else {
                             //red cube
-                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate();
+                            cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate2();
                         }
                     }
 

@@ -14,6 +14,7 @@ namespace Assets.Gamelogic.Core
         public static readonly string PlayerPrefabName = "Player";
         public static readonly string PlayerCreatorPrefabName = "PlayerCreator";
         public static readonly string CubePrefabName = "Cube";
+        public static readonly string CubePrefabName2 = "Cube1";
 
         public static readonly float HeartbeatCheckIntervalSecs = 3;
         public static readonly uint TotalHeartbeatsBeforeTimeout = 3;
@@ -27,6 +28,7 @@ namespace Assets.Gamelogic.Core
         public static readonly float PlayerEntityCreationRetrySecs = 4;
 
         public static readonly float PlayerIncrement = 0.2f;
+        public static readonly float PlayerDecrement = 1.0f;
         public static readonly int MaxScore = 10;
         public static readonly int ScoreIncrement =5;
         public static readonly string DefaultSnapshotPath = Application.dataPath + "/../../../snapshots/default.snapshot";

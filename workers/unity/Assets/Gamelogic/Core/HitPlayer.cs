@@ -45,6 +45,34 @@ namespace Assets.GameLogic.Core {
                     Debug.LogWarning("2:");
                     ScaleWriter.Send(scaleUpdate);
                     Debug.LogWarning("3:");
+                
+                
+
+                }
+                if (other != null && other.gameObject.GetSpatialOsEntity().PrefabName == "Cube1")
+                {
+                    //Debug.LogWarning("0: Collision accepted from " + gameObject.GetSpatialOsEntity().PrefabName+ "with " + other.gameObject.GetSpatialOsEntity().PrefabName);
+
+                    SpatialOS.Commands.DeleteEntity(ClientConnectionWriter, other.gameObject.EntityId(), result => {
+                        if (result.StatusCode != StatusCode.Success)
+                        {
+                            Debug.Log("Failed to delete entity with error: " + result.ErrorMessage);
+                            return;
+                        }
+                        Debug.Log("Deleted entity: " + result.Response.Value);
+                    });
+                    var current = ScaleWriter.Data.s;
+
+                    Debug.LogWarning("1: " + current + " - " + gameObject.transform.localScale.x);
+                    if (current >= 2){
+                        var scaleUpdate = new Scale.Update()
+                            .SetS(current - SimulationSettings.PlayerDecrement);
+                        Debug.LogWarning("2:");
+                        ScaleWriter.Send(scaleUpdate);
+                        Debug.LogWarning("3:");
+                    }
+
+
 
                 }
             }

@@ -15,10 +15,6 @@ using UnityEngine.UI;
 using Improbable.Entity.Component;
 using Improbable.Collections;
 using System;
-using System.Xml.Serialization;
-using System.Timers;
-using System.Collections;
-using Assets.Gamelogic;
 
 [WorkerType(WorkerPlatform.UnityClient)]
 
@@ -31,7 +27,6 @@ public class PlayerInputSender : MonoBehaviour
     [Require] private Scale.Reader ScaleReader;
     [Require] private Scoreboard.Writer ScoreboardWriter;
     [SerializeField] private GameObject Model;
-    [SerializeField] private ParticleSystem expl;
 
     private GameObject scoreCanvasUI;
     private Text totalPointsGUI;
@@ -74,30 +69,11 @@ public class PlayerInputSender : MonoBehaviour
         return new ScoreResponse();
 
     }
-
     void BackToSplash(Dead dead) {
         Debug.LogWarning("Called backtosplash");
-        Explode();
-             
+        PlayerInputWriter.Send(new PlayerInput.Update().AddRespawn(new Respawn()));     
     }
 
-    public void Explode(){
-        expl.Play();
-        if (expl.isPlaying)
-        {
-            FindObjectOfType<PlayerExplosion>().explosion=true;
-            Debug.LogWarning("Explosion");
-        }
-        Invoke("Chiusura", expl.time + 1F);
-    }
-
-    void Chiusura(){
-           
-        expl.Stop();
-        Debug.LogWarning("Stop  Explosion: Respawn");
-        PlayerInputWriter.Send(new PlayerInput.Update().AddRespawn(new Respawn()));
-
-    }
 
     private void OnNumberOfPointsUpdated(Scale.Update update) {
         float v = update.s.Value * SimulationSettings.ScoreIncrement-(SimulationSettings.ScoreIncrement-1);

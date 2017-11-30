@@ -17,6 +17,7 @@ using Assets.Gamelogic.Core;
 public class ScaleListener : MonoBehaviour {
     [Require] private Scale.Reader ScaleReader;
     [Require] private Status.Writer StatusWriter;
+    [Require] private PlayerData.Reader PlayerDataReader;
 
     void OnEnable() {
         transform.localScale = new Vector3(ScaleReader.Data.s, ScaleReader.Data.s, ScaleReader.Data.s);
@@ -68,7 +69,7 @@ public class ScaleListener : MonoBehaviour {
                   if (entity != null) {
                       Debug.LogWarning("entity found");
 
-                      SpatialOS.Commands.SendCommand(StatusWriter, Status.Commands.GameWon.Descriptor, new Winner(gameObject.GetSpatialOsEntity().EntityId.ToString()), id)
+                      SpatialOS.Commands.SendCommand(StatusWriter, Status.Commands.GameWon.Descriptor, new Winner(PlayerDataReader.Data.name), id)
                           .OnSuccess(OnGameWinSuccess)
                           .OnFailure(OnGameWinFailure);
 

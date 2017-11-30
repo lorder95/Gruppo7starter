@@ -155,35 +155,36 @@ namespace Assets.Gamelogic.Core {
 
 
 
-                var random = UnityEngine.Random.Range(0, 9);
+                var random = UnityEngine.Random.Range(0, 12);
                 if (random >= positions.Count) {
                     random = 0;
                 }
                 var pos = RandomOnPlane(positions[random]);
 
-                float time = 0.18f;
+                float time = 0.3f;
                 if (queryResult > 0) {
+                    int v = UnityEngine.Random.Range(1, 101);
                     if (queryResult < 3) {
-                        time = 0.4f;
-                        int v = UnityEngine.Random.Range(1, 3);
-                        if (v == 1) {
+                        time = 0.6f;
+                        
+                        if (v < 91) {
                             cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate(pos);
                         } else {
                             //red cube
                             cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate2(pos);
                         }
                     } else if (queryResult < 11) {
-                        int v = UnityEngine.Random.Range(1, 11);
-                        if (v < 5) {
+                       
+                        if (v < 96) {
                             cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate(pos);
                         } else {
                             //red cube
                             cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate2(pos);
                         }
                     } else {
-                        time = 0.025f;
-                        int v = UnityEngine.Random.Range(1, 11);
-                        if (v < 2) {
+                        time = 0.05f;
+                        
+                        if (v < 99) {
                             cubeEntityTemplate = EntityTemplateFactory.CreateCubeTemplate(pos);
                         } else {
                             //red cube

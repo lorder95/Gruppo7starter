@@ -10,7 +10,7 @@ using Improbable.Entity.Component;
 using Improbable.Player;
 
 using Improbable.Unity;
-
+using Improbable.Unity.Core;
 using Improbable.Unity.Visualizer;
 using System.Collections;
 using UnityEngine;
@@ -54,6 +54,7 @@ public class PlayerMover : MonoBehaviour {
     Win ResetGame(Winner request, ICommandCallerInfo callerInfo) {
         Debug.LogWarning("This entity won: " + request.winnerName);
         Respawning();
+        SpatialOS.Commands.SendCommand(StatusWriter, Scoreboard.Commands.ShowReset.Descriptor, new WinnerName(request.winnerName), gameObject.GetSpatialOsEntity().EntityId);
         return new Win();
     }
 

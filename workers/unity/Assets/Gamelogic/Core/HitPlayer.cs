@@ -10,6 +10,7 @@ using Improbable.Worker;
 using Improbable.Core;
 using UnityEngine.SceneManagement;
 using Assets.Gamelogic.Core;
+using Assets.Gamelogic;
 
 namespace Assets.GameLogic.Core {
     [WorkerType(WorkerPlatform.UnityWorker)]
@@ -20,11 +21,15 @@ namespace Assets.GameLogic.Core {
         [Require] private Scale.Writer ScaleWriter;
         [Require] private Status.Writer StatusWriter;
         [SerializeField] private GameObject Model;
+        private ParticleSystem expl;
         private Rigidbody rigidbody;
         void OnEnable() {
             rigidbody = GetComponent<Rigidbody>();
             Model.GetComponent<MeshRenderer>().enabled = false;
+           
         }
+
+
         private void OnTriggerEnter(Collider other) {
             if (other.gameObject.IsSpatialOsEntity()) {
                 if (other != null && other.gameObject.GetSpatialOsEntity().PrefabName == "Cube") {
@@ -92,7 +97,7 @@ namespace Assets.GameLogic.Core {
                         //SceneManager.LoadSceneAsync(BuildSettings.SplashScreenScene, LoadSceneMode.Additive);
                         
                         Debug.LogWarning("Calling");
-
+                        
                         StatusWriter.Send(new Status.Update().AddPlayerDead(new Dead()));
                         /*SpatialOS.Commands.DeleteEntity(ClientConnectionWriter, gameObject.EntityId(), result => {
                         if (result.StatusCode != StatusCode.Success) {

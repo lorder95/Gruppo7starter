@@ -9,9 +9,15 @@ type ScoreEntry{
 	uint32 value = 2;
 }
 
+type ResetResponse{}
+type WinnerName{
+	string winner = 1;
+}
+
 component Scoreboard {
     // Component ID, unique within the project
     id = 2006;
 	
 	command ScoreResponse send_scoreboard(ScoreRequest);
+	command ResetResponse show_reset(WinnerName);
 }
